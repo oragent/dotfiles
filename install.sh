@@ -105,7 +105,7 @@ luks_header_device=$(get_choice "Installation" "Select disk to write LUKS header
 clear
 
 echo -e "\n### Setting up fastest mirrors"
-reflector --latest 30 --sort rate --save /etc/pacman.d/mirrorlist
+reflector --country Australia --sort rate --save /etc/pacman.d/mirrorlist
 
 echo -e "\n### Setting up partitions"
 umount -R /mnt 2> /dev/null || true
@@ -162,9 +162,9 @@ mount -o noatime,nodiratime,compress=zstd,subvol=snapshots /dev/mapper/luks /mnt
 echo -e "\n### Configuring custom repo"
 mkdir "/mnt/var/cache/pacman/${user}-local"
 
-if [[ "${user}" == "maximbaz" && "${hostname}" == "home-"* ]]; then
+if [[ "${user}" == "anon" && "${hostname}" == "hv-"* ]]; then
     wget -m -nH -np -q --show-progress --progress=bar:force --reject='index.html*' --cut-dirs=2 -P "/mnt/var/cache/pacman/${user}-local" 'https://pkgbuild.com/~maximbaz/repo/'
-    rename -- 'maximbaz.' "${user}-local." "/mnt/var/cache/pacman/${user}-local"/*
+    rename -- 'anon.' "${user}-local." "/mnt/var/cache/pacman/${user}-local"/*
 else
     repo-add "/mnt/var/cache/pacman/${user}-local/${user}-local.db.tar"
 fi
@@ -177,6 +177,9 @@ Server = file:///mnt/var/cache/pacman/${user}-local
 [maximbaz]
 Server = https://pkgbuild.com/~maximbaz/repo
 
+[linux-surface]
+Server = https://pkg.surfacelinux.com/arch/
+
 [options]
 CacheDir = /mnt/var/cache/pacman/pkg
 CacheDir = /mnt/var/cache/pacman/${user}-local
@@ -184,7 +187,7 @@ EOF
 fi
 
 echo -e "\n### Installing packages"
-pacstrap -i /mnt maximbaz
+pacstrap -i /mnt anon
 
 echo -e "\n### Generating base config files"
 ln -sfT dash /mnt/usr/bin/sh
@@ -200,7 +203,7 @@ genfstab -L /mnt >> /mnt/etc/fstab
 echo "${hostname}" > /mnt/etc/hostname
 echo "en_US.UTF-8 UTF-8" >> /mnt/etc/locale.gen
 echo "en_DK.UTF-8 UTF-8" >> /mnt/etc/locale.gen
-ln -sf /usr/share/zoneinfo/Europe/Copenhagen /mnt/etc/localtime
+ln -sf /usr/share/zoneinfo/Australia/Tasmania /mnt/etc/localtime
 arch-chroot /mnt locale-gen
 cat << EOF > /mnt/etc/mkinitcpio.conf
 MODULES=()
@@ -233,7 +236,7 @@ arch-chroot /mnt passwd -dl root
 echo -e "\n### Setting permissions on the custom repo"
 arch-chroot /mnt chown -R "$user:$user" "/var/cache/pacman/${user}-local/"
 
-if [ "${user}" = "maximbaz" ]; then
+if [ "${user}" = "anon" ]; then
     echo -e "\n### Cloning dotfiles"
     arch-chroot /mnt sudo -u $user bash -c 'git clone --recursive https://github.com/maximbaz/dotfiles.git ~/.dotfiles'
 
