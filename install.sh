@@ -28,7 +28,7 @@ exec 2> >(tee "stderr.log" >&2)
 
 export SNAP_PAC_SKIP=y
 
-installpkgs=(
+installPkgs=(
     # base
     'base'
     'dash'
@@ -517,7 +517,7 @@ sudo pacman-key --finger 56C464BAAC421453
 sudo pacman-key --lsign-key 56C464BAAC421453
 
 echo -e "\n### Installing packages"
-pacstrap -i /mnt "{installpkgs[@]}"
+pacstrap -i /mnt ${installPkgs[*]}
 
 echo -e "\n### Generating base config files"
 ln -sfT dash /mnt/usr/bin/sh
