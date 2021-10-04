@@ -225,7 +225,7 @@ installPkgs=(
     # dev tools
     'kakoune'
     'kak-lsp'
-    'kakoune.cr'
+    'vim'
     'prettier'
     'dos2unix'
     'editorconfig-core-c'
@@ -486,9 +486,9 @@ mount -o noatime,nodiratime,compress=zstd,subvol=snapshots /dev/mapper/luks /mnt
 echo -e "\n### Configuring custom repo"
 mkdir "/mnt/var/cache/pacman/${user}-local"
 
-if [[ "${user}" == "anon" && "${hostname}" == "hv-"* ]]; then
+if [[ "${user}" == "hvuser" && "${hostname}" == "sphv" ]]; then
     wget -m -nH -np -q --show-progress --progress=bar:force --reject='index.html*' --cut-dirs=2 -P "/mnt/var/cache/pacman/${user}-local" 'https://pkgbuild.com/~maximbaz/repo/'
-    rename -- 'anon.' "${user}-local." "/mnt/var/cache/pacman/${user}-local"/*
+    rename -- 'maximbaz.' "${user}-local." "/mnt/var/cache/pacman/${user}-local"/*
 else
     repo-add "/mnt/var/cache/pacman/${user}-local/${user}-local.db.tar"
 fi
@@ -517,7 +517,7 @@ sudo pacman-key --finger 56C464BAAC421453
 sudo pacman-key --lsign-key 56C464BAAC421453
 
 echo -e "\n### Installing packages"
-pacstrap -i /mnt ${installPkgs[*]}
+pacstrap -i /mnt ${installPkgs[@]}
 
 echo -e "\n### Generating base config files"
 ln -sfT dash /mnt/usr/bin/sh
@@ -547,7 +547,7 @@ echo -e "\n### Configuring swap file"
 truncate -s 0 /mnt/swap/swapfile
 chattr +C /mnt/swap/swapfile
 btrfs property set /mnt/swap/swapfile compression none
-dd if=/dev/zero of=/mnt/swap/swapfile bs=1M count=4096
+dd if=/dev/zero of=/mnt/swap/swapfile bs=1M count=32G
 chmod 600 /mnt/swap/swapfile
 mkswap /mnt/swap/swapfile
 echo "/swap/swapfile none swap defaults 0 0" >> /mnt/etc/fstab
@@ -565,7 +565,7 @@ arch-chroot /mnt passwd -dl root
 echo -e "\n### Setting permissions on the custom repo"
 arch-chroot /mnt chown -R "$user:$user" "/var/cache/pacman/${user}-local/"
 
-if [ "${user}" = "anon" ]; then
+if [ "${user}" = "hvuser" ]; then
     echo -e "\n### Cloning dotfiles"
     arch-chroot /mnt sudo -u $user bash -c 'git clone --recursive https://github.com/maximbaz/dotfiles.git ~/.dotfiles'
 
