@@ -28,6 +28,330 @@ exec 2> >(tee "stderr.log" >&2)
 
 export SNAP_PAC_SKIP=y
 
+installpkgs=(
+    # base
+    'base'
+    'dash'
+    'linux-surface'
+    'linux-firmware'
+    'linux-surface-headers'
+    'kernel-modules-hook'
+    'mkinitcpio-encrypt-detached-header'
+    'logrotate'
+    'man-pages'
+    'btrfs-progs'
+    'htop'
+    'vi'
+
+    # base-devel
+    'posix'
+    'autoconf'
+    'automake'
+    'bison'
+    'fakeroot'
+    'flex'
+    'gcc'
+    'gettext'
+    'groff'
+    'gzip'
+    'libtool'
+    'make'
+    'pacman'
+    'pkgconf'
+    'sudo'
+    'texinfo'
+    'which'
+
+    # other arch
+    'pacman-contrib'
+    'devtools'
+    'reflector'
+    'pkgstats'
+
+    # boot
+    'arch-secure-boot'
+    'intel-ucode'
+    'terminus-font'
+
+    # files
+    'progress'
+    'gocryptfs'
+    'ntfs-3g'
+    'sshfs'
+    'udiskie'
+    'udiskie-dmenu-git'
+    'xplr'
+    'vimiv-qt'
+    'ncdu'
+    'croc'
+    'webwormhole-git'
+    'bat'
+    'exa'
+    'fd'
+    'mlocate'
+    'ripgrep'
+    'ripgrep-all'
+    'tree'
+    'rmtrash'
+    'imagemagick'
+    'jq'
+    'dfrs'
+    'seafile-client'
+    'zathura-pdf-mupdf'
+    'pdftk'
+    'inotify-tools'
+    'xournalpp'
+    'bfs'
+    'lftp'
+
+    # archiving
+    'lbzip2'
+    'pigz'
+    'pixz'
+    'p7zip'
+    'unrar'
+    'unzip'
+    'zip'
+
+    # network
+    'iwd'
+    'nftables'
+    'iptables-nft'
+    'bandwhich'
+    'net-tools'
+    'nmap'
+    'nzbget'
+    'nzbget-systemd'
+    'openbsd-netcat'
+    'dog'
+    'mtr'
+    'sipcalc'
+    'wget'
+    'rsync'
+    'openssh'
+    'curlie'
+    'speedtest-cli'
+    'wireguard-tools'
+    'systemd-resolvconf'
+    'vnstat'
+    'proxychains-ng'
+
+    # security
+    'arch-audit'
+    'overdue'
+    'ccid'
+    'pam-u2f'
+    'yubikey-touch-detector'
+    'usbguard'
+    'pinentry'
+    'gcr'
+    'checksec'
+    'polkit-gnome'
+
+    # oom prevention
+    'earlyoom'
+    'systembus-notify'
+
+    # hardware
+    'iptsd'
+    'fwupd'
+    'tlp'
+    'dmidecode'
+    'upower'
+    'acpi'
+    'iriunwebcam-bin'
+    'bolt'
+
+    # audio
+    'pulseaudio'
+    'pulseaudio-alsa'
+    'pulseaudio-bluetooth'
+    'pamixer'
+    'pavucontrol'
+    'playerctl'
+    'bluez'
+    'bluez-utils'
+
+    # ui
+    'sway'
+    'swaylock'
+    'xorg-server-xwayland'
+    'wl-clipboard'
+    'wl-clipboard-manager'
+    'python-i3ipc'
+    'mako'
+    'gtk-theme-arc-gruvbox-git'
+    'wlsunset'
+    'safeeyes'
+    'waybar'
+    'light'
+    'slurp'
+    'wluma'
+    'vulkan-intel'
+    'vulkan-headers'
+    'flashfocus-git'
+    'qt5-wayland'
+    'wtype'
+    'wlrctl'
+    'wofi'
+
+    # fonts
+    'ttf-dejavu'
+    'ttf-courier-prime'
+    'ttf-heuristica'
+    'ttf-liberation'
+    'noto-fonts'
+    'cantarell-fonts'
+    'ttf-droid'
+    'ttf-lato'
+    'ttf-opensans'
+    'ttf-signika'
+    'xorg-fonts-misc'
+    'otf-font-awesome'
+    'ttf-joypixels'
+
+    # aur
+    'aurpublish'
+    'aurutils'
+    'repoctl'
+    'rebuild-detector'
+
+    # git
+    'git'
+    'git-delta'
+    'meld'
+    'tig'
+
+    # dev tools
+    'kakoune'
+    'kak-lsp'
+    'kakoune.cr'
+    'prettier'
+    'dos2unix'
+    'editorconfig-core-c'
+    'docker'
+    'docker-compose'
+    'direnv'
+    'terraform'
+    'terraform-ls'
+    'teehee'
+    'strace'
+    'fzf'
+    'visidata'
+
+    # shell dev
+    'bash-language-server'
+    'checkbashisms'
+    'shellcheck'
+    'shfmt'
+
+    # python dev
+    'python-language-server'
+    'python-black'
+    'python-pip'
+    'python-pylint'
+    'yapf'
+    'bpython'
+
+    # go dev
+    'go'
+    'go-tools'
+    'gopls'
+    'revive'
+    'staticcheck'
+
+    # js dev
+    'yarn'
+
+    # rust dev
+    'rust'
+    'rust-analyzer'
+
+    # c dev
+    'meson'
+
+    # lua dev
+    'stylua-bin'
+
+    # spell
+    'aspell-da'
+    'aspell-en'
+    'aspell-ru'
+
+    # android
+    'android-tools'
+    'android-udev'
+
+    # terminal
+    'kitty'
+    'zsh'
+    'lscolors-git'
+
+    # passwords
+    'pass'
+    'pwgen'
+    'msitools'
+
+    # email
+    'isync'
+    'msmtp'
+    'neomutt'
+    'urlscan'
+    'goimapnotify'
+    'mutt-ics'
+    'w3m'
+
+    # browsers
+    'qutebrowser'
+    'python-adblock'
+    'chromium-widevine'
+    'pdfjs'
+    'python-tldextract'
+    'intel-media-driver'
+
+    # screenshots & gifs & desktop sharing
+    'grim'
+    'swappy'
+    'wf-recorder'
+    'v4l2loopback-dkms'
+    'xdg-desktop-portal-wlr'
+    'libpipewire02'
+    'pipewire-media-session'
+
+    # video
+    'mpv'
+    'mpv-mpris'
+    'youtube-dl'
+    'ffmpeg'
+
+    # kubernetes
+    'kubectl'
+    'kubectx'
+
+    # virtual machines
+    'libvirt'
+    'virt-manager'
+    'qemu'
+    'dnsmasq'
+    'ebtables'
+    'edk2-ovmf'
+
+    # misc
+    'anydesk'
+    'dmenu-term'
+    'calibre'
+    'hugo'
+    'krita'
+    'qalculate-gtk'
+    'libreoffice-fresh'
+    'transmission-gtk'
+    'signal-desktop'
+    'libinput-gestures'
+)
+
+
+
+
 # Dialog
 BACKTITLE="Arch Linux installation"
 
@@ -186,8 +510,14 @@ CacheDir = /mnt/var/cache/pacman/${user}-local
 EOF
 fi
 
+echo -e "\n### Installing surface key"
+curl -s https://raw.githubusercontent.com/linux-surface/linux-surface/master/pkg/keys/surface.asc \
+    | sudo pacman-key --add -
+sudo pacman-key --finger 56C464BAAC421453
+sudo pacman-key --lsign-key 56C464BAAC421453
+
 echo -e "\n### Installing packages"
-pacstrap -i /mnt anon
+pacstrap -i /mnt "{installpkgs[@]}"
 
 echo -e "\n### Generating base config files"
 ln -sfT dash /mnt/usr/bin/sh
